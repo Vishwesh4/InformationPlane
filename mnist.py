@@ -1,4 +1,5 @@
 import math
+
 import torch
 import torchmetrics
 import numpy as np
@@ -9,6 +10,8 @@ import torch.optim as optim
 import matplotlib.pyplot as plt
 import torch.nn.functional as F
 import torchvision.models as models
+
+from mine_calculate import cal_mi, MINE_XH, MINE_YH
 
 def train(dataloader,optimizer,loss_fun,metrics,device,epoch):
     loss_val = []
@@ -28,12 +31,12 @@ def train(dataloader,optimizer,loss_fun,metrics,device,epoch):
         loss_val.append(loss.item())
     metrics_val = metrics.compute()
     metrics.reset()
-    print(
-        "Total Train loss: {}".format(
-            np.mean(loss_val)
-        )
-    )
-    print(metrics_val["train_Accuracy"])
+    # print(
+    #     "Total Train loss: {}".format(
+    #         np.mean(loss_val)
+    #     )
+    # )
+    # print(f'Accuracy: {metrics_val["train_Accuracy"].item()}')
 
 def test(dataloader,loss_fun,metrics,device,epoch):
     loss_val = []
@@ -56,7 +59,32 @@ def test(dataloader,loss_fun,metrics,device,epoch):
             np.mean(loss_val)
         )
     )
-    print(metrics_val["test_Accuracy"])
+    print(f'Accuracy: {metrics_val["test_Accuracy"].item()}')
+
+def get_embeddings(dataloader,device):
+    model.eval()
+    X = []
+    Y = []
+    H = {}
+    flag = 0
+    with torch.no_grad():
+        for data in tqdm(dataloader,desc="Getting Embeddings"):
+            image,label = data
+            image = torch.flatten(image,start_dim=1,end_dim=-1)
+            image_in = image.to(device)
+            outputs = model(image_in,return_rep=True)
+            X.append(image)
+            Y.append(label)
+            for i,output in enumerate(outputs):
+                if flag==0:
+                    H[i] = []
+                H[i].append(output.detach().cpu()) 
+            flag = 1
+    X = torch.cat(X)
+    Y = torch.cat(Y)
+    for key in H.keys():    
+        H[key] = torch.cat(H[key])
+    return X,Y,H
 
 # hyperparameters
 device        = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -68,20 +96,26 @@ momentum      = 0
 weight_decay  = 0.0001
 
 class MNIST_model(nn.Module):
-    def __init__(self, input_size=784, hidden_size=100):
+    def __init__(self, input_size=784, hidden_size=100, num_layers=3):
         super().__init__()
-        self.fc1 = nn.Linear(input_size, hidden_size)
-        self.fc2 = nn.Linear(hidden_size, hidden_size)
-        self.fc3 = nn.Linear(hidden_size, 10)
+        self.n_layers = num_layers
+        self.fc = torch.nn.ModuleList()
+        self.fc.append(nn.Linear(input_size, hidden_size))
+        for i in range(self.n_layers-1):
+            self.fc.append(nn.Linear(hidden_size, hidden_size))
+        self.fc.append(nn.Linear(hidden_size, 10))
         
     def forward(self, input,return_rep=False):
-        output1 = F.tanh(self.fc1(input))
-        output2 = F.tanh(self.fc2(output1))
-        output3 = self.fc3(output2)
+        outputs = []
+        x = input
+        for i in range(self.n_layers):
+            x = F.tanh(self.fc[i](x))
+            outputs.append(x)
+        pred = self.fc[-1](x)
         if return_rep:
-            return output3,F.tanh(output3),output2,output1
+            return outputs
         else:
-            return output3
+            return pred
 
 model = MNIST_model().to(device)
 
@@ -116,3 +150,8 @@ optimizer = optim.Adam(model.parameters(),
 for i in range(epochs):
     train(trainloader,optimizer,loss_function,trainmetrics,device,i)
     test(testloader,loss_function,testmetrics,device,i)
+    X,Y,H = get_embeddings(testloader, device)
+    
+    # print("ok")
+    
+

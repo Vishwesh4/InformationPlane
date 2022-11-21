@@ -66,6 +66,18 @@ class MINE_YH(nn.Module):
 
         return torch.mm(output_y,output_h.t())
 
+class MINE_dataset(torch.utils.data.Dataset):
+    def __init__(self, X, Y):
+        super().__init__()
+        self.X = X
+        self.Y = Y
+    
+    def __len__(self):
+        return self.X.shape[0]
+    
+    def __getitem__(self,index):
+        return self.X[index,:], self.Y[index,:]
+
 
 def mutual_information(data, mine_net):
     X,Y = data
@@ -115,9 +127,12 @@ def learn_mine(batch, mine_net, mine_net_optim,  ma_et, ma_rate=0.01):
 #             print(result[-1])
 #     return result
 
-def train(dataloader, mine_net,mine_net_optim, batch_size=64, iter_num=1000, log_freq=50):
+def construct_dataloader()
+
+
+def cal_mi(data, mine_net, mine_net_optim, batch_size=64, iter_num=1000, log_freq=50, verbose=False):
     # data is x or y
-    result = list()
+    result = []
     ma_et = 1.
     for i in range(iter_num):
         batch_result = []
@@ -125,7 +140,7 @@ def train(dataloader, mine_net,mine_net_optim, batch_size=64, iter_num=1000, log
             mi_lb, ma_et = learn_mine(batch, mine_net, mine_net_optim, ma_et)
             batch_result.append(mi_lb.detach().cpu().numpy())
         result.append(np.mean(batch_result))
-        if (i+1)%(log_freq)==0:
+        if ((i+1)%(log_freq)==0) and verbose:
             print(result[-1])
     return result
 
