@@ -28,7 +28,10 @@ $ python main.py --DS DD --lr 0.001 --num-gc-layers 3
 and construct the plots using `plot_IBplane.py`
 
 ## Results
-<img src="https://github.com/Vishwesh4/MAT1510-CourseProject/blob/master/Results/mi_tanh_test.png" align="center" width="200"><figcaption>Fig.1 - Information Plane for Neural Network(tanh activation) trained on MNIST</figcaption></a>
-<img src="https://github.com/Vishwesh4/MAT1510-CourseProject/blob/master/Results/mi_relu_test.png" align="center" width="200"><figcaption>Fig.2 -  Information Plane for Neural Network(ReLu activation) trained on MNIST</figcaption></a>  
-<img src="https://github.com/Vishwesh4/MAT1510-CourseProject/blob/master/Results/mi_gnn_dd.png" align="center" width="200"><figcaption>Fig.3 -  Information Plane for Graph Neural Network(tanh activation) trained on DD</figcaption></a>
-<img src="https://github.com/Vishwesh4/MAT1510-CourseProject/blob/master/Results/mi_gnn_infomax.png" align="center" width="200"><figcaption>Fig.4 -  Information Plane for Deep Graph Infomax (InfoGraph model) trained on DD</figcaption></a>     
+<img src="https://github.com/Vishwesh4/MAT1510-CourseProject/blob/master/Results/mi_tanh_test.png" align="center" width="500"><figcaption>Fig.1 - Information Plane for Neural Network(tanh activation) trained on MNIST</figcaption></a>  
+  
+<img src="https://github.com/Vishwesh4/MAT1510-CourseProject/blob/master/Results/mi_relu_test.png" align="center" width="500"><figcaption>Fig.2 -  Information Plane for Neural Network(ReLu activation) trained on MNIST</figcaption></a>  
+
+<img src="https://github.com/Vishwesh4/MAT1510-CourseProject/blob/master/Results/mi_gnn_dd.png" align="center" width="500"><figcaption>Fig.3 -  Information Plane for Graph Neural Network(tanh activation) trained on DD</figcaption></a>  
+
+<img src="https://github.com/Vishwesh4/MAT1510-CourseProject/blob/master/Results/mi_gnn_infomax.png" align="center" width="500"><figcaption>Fig.4 -  Information Plane for Deep Graph Infomax (InfoGraph model) trained on DD</figcaption></a>     
