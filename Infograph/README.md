@@ -1,4 +1,5 @@
 ## Usage
+Code taken from [link](https://github.com/fanyun-sun/InfoGraph/tree/master/unsupervised)
 sample command
 ```
 $ python main.py --DS DATASET_NAME --lr 0.001 --num-gc-layers 3
